@@ -576,13 +576,15 @@ export const Portfolio: React.FC = () => {
                     >
                       {/* Interactive Visual Thumbnail */}
                       <div className="aspect-[16/10] overflow-hidden bg-slate-950 relative border-b border-slate-100 dark:border-slate-800/65">
-                        <img 
-                          src={getOptimizedImage(project.imageUrl)} 
-                          alt={project.title} 
-                          className="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-105"
-                          loading="lazy"
-                          referrerPolicy="no-referrer"
-                        />
+                        {project.imageUrl ? (
+                          <img 
+                            src={getOptimizedImage(project.imageUrl)} 
+                            alt={project.title} 
+                            className="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-105"
+                            loading="lazy"
+                            referrerPolicy="no-referrer"
+                          />
+                        ) : null}
                         <div className="absolute inset-0 bg-gradient-to-t from-slate-950/40 text-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 flex items-end p-6 select-none" />
                         
                         {/* Dynamic category badge */}

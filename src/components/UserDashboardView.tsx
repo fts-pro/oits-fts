@@ -419,12 +419,18 @@ export default function UserDashboardView({ currentUser, onUpdateUser, theme = '
                 <div className="space-y-2.5">
                   <label className="block text-[10px] uppercase tracking-wider text-slate-500 font-sans font-bold">Select Directory Avatar Badge</label>
                   <div className="flex flex-wrap gap-3 items-center">
-                    <img 
-                      src={avatar} 
-                      alt="Current Avatar" 
-                      className="w-14 h-14 rounded-full border-2 border-blue-600 bg-slate-50 shadow-xs"
-                      referrerPolicy="no-referrer"
-                    />
+                    {avatar ? (
+                      <img 
+                        src={avatar} 
+                        alt="Current Avatar" 
+                        className="w-14 h-14 rounded-full border-2 border-blue-600 bg-slate-50 shadow-xs"
+                        referrerPolicy="no-referrer"
+                      />
+                    ) : (
+                      <div className="w-14 h-14 rounded-full border-2 border-blue-600 bg-slate-100 flex items-center justify-center text-slate-400 font-bold text-lg">
+                        {currentUser?.username?.charAt(0).toUpperCase() || 'U'}
+                      </div>
+                    )}
                     <div className="grid grid-cols-6 gap-2">
                       {PRESET_AVATARS.map((url, idx) => (
                         <button

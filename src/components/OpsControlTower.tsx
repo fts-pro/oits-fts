@@ -341,7 +341,13 @@ export default function OpsControlTower({
               <div className="space-y-4 font-semibold">
                 <div className="flex items-center gap-3 bg-slate-50 p-3 rounded-xl border border-slate-200">
                   <div className="relative shrink-0">
-                    <img src={currentUser.avatar} alt="User Avatar" className="w-10 h-10 rounded-full border border-slate-200" />
+                    {currentUser.avatar ? (
+                      <img src={currentUser.avatar} alt="User Avatar" className="w-10 h-10 rounded-full border border-slate-200 object-cover" />
+                    ) : (
+                      <div className="w-10 h-10 rounded-full border border-slate-200 bg-slate-200 flex items-center justify-center text-slate-600 font-bold text-sm">
+                        {currentUser.username.charAt(0).toUpperCase()}
+                      </div>
+                    )}
                     <span className="absolute bottom-0 right-0 w-3 h-3 bg-emerald-500 border-2 border-white rounded-full shadow-sm" title="Online"></span>
                   </div>
                   <div className="text-left font-semibold">

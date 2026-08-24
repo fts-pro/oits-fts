@@ -197,11 +197,14 @@ export const Hero: React.FC = () => {
                 </div>
 
                 <div className="relative aspect-[4/3] rounded-3xl overflow-hidden mb-6 bg-slate-100 dark:bg-slate-800">
-                  <img 
-                    src={activeProject?.imageUrl} 
-                    alt="" 
-                    className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" 
-                  />
+                  {activeProject?.imageUrl ? (
+                    <img 
+                      src={activeProject.imageUrl} 
+                      alt={activeProject.title || "Featured Case Study"} 
+                      className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" 
+                      referrerPolicy="no-referrer"
+                    />
+                  ) : null}
                   <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-transparent to-transparent opacity-80" />
                   <div className="absolute bottom-6 left-6 right-6">
                     <span className="text-[10px] font-black text-blue-400 uppercase mb-2 block">{activeProject?.category}</span>

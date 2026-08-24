@@ -704,7 +704,13 @@ export default function ChatroomView({
         {/* User Identity Signpost */}
         <div className="p-4 border-t border-slate-200 bg-slate-100">
           <div className="flex items-center gap-3">
-            <img src={currentUser?.avatar} alt="avatar" className="w-9 h-9 border border-slate-200 rounded-full bg-slate-50" />
+            {currentUser?.avatar ? (
+              <img src={currentUser.avatar} alt="avatar" className="w-9 h-9 border border-slate-200 rounded-full bg-slate-50 object-cover" referrerPolicy="no-referrer" />
+            ) : (
+              <div className="w-9 h-9 border border-slate-200 rounded-full bg-slate-200 flex items-center justify-center text-slate-600 font-bold text-xs">
+                {currentUser?.username?.charAt(0).toUpperCase() || 'U'}
+              </div>
+            )}
             <div className="truncate">
               <span className="text-xs font-bold text-slate-700 block leading-none">{currentUser?.username}</span>
               <span className="text-[10px] text-blue-600 capitalize font-sans mt-1 font-bold block">{currentUser?.role} Link Active</span>
@@ -948,7 +954,13 @@ export default function ChatroomView({
                   onMouseEnter={() => markAsRead(msg.id)}
                 >
                   <div className="relative shrink-0">
-                    <img src={msg.avatar} alt="avatar" className="w-9 h-9 rounded-full border border-slate-200 bg-slate-50 shadow-xs" referrerPolicy="no-referrer" />
+                    {msg.avatar ? (
+                      <img src={msg.avatar} alt="avatar" className="w-9 h-9 rounded-full border border-slate-200 bg-slate-50 shadow-xs object-cover" referrerPolicy="no-referrer" />
+                    ) : (
+                      <div className="w-9 h-9 rounded-full border border-slate-200 bg-slate-200 flex items-center justify-center text-slate-600 font-bold text-xs">
+                        {msg.username.charAt(0).toUpperCase()}
+                      </div>
+                    )}
                     {onlineUserIds.includes(msg.senderId) && (
                       <span className="absolute bottom-0 right-0 w-2.5 h-2.5 bg-emerald-500 border-2 border-white rounded-full shadow-sm" title="Online"></span>
                     )}
@@ -1152,7 +1164,13 @@ export default function ChatroomView({
           {activeUsers.map(user => (
             <div key={user.id} className="flex items-center gap-2.5 p-1.5 rounded-xl border border-slate-200 bg-white shadow-xs">
               <div className="relative shrink-0">
-                <img src={user.avatar} alt="avatar" className="w-6.5 h-6.5 border border-slate-100 rounded-full bg-slate-50" referrerPolicy="no-referrer" />
+                {user.avatar ? (
+                  <img src={user.avatar} alt="avatar" className="w-6.5 h-6.5 border border-slate-100 rounded-full bg-slate-50 object-cover" referrerPolicy="no-referrer" />
+                ) : (
+                  <div className="w-6.5 h-6.5 border border-slate-100 rounded-full bg-slate-200 flex items-center justify-center text-slate-600 font-bold text-[9px]">
+                    {user.username.charAt(0).toUpperCase()}
+                  </div>
+                )}
                 <motion.span 
                   animate={{ scale: [1, 1.2, 1], opacity: [1, 0.7, 1] }}
                   transition={{ repeat: Infinity, duration: 2 }}
