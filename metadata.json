@@ -1,0 +1,6 @@
+{
+  "name": "INNITIATE",
+  "description": "High-fidelity, secure multi-tenant corporate platform representing the AI-Powered Solutions Portfolio, integrated with e2e encrypted real-time chat, CMS admin, user settings panel, and multifactor authentication.",
+  "requestFramePermissions": ["notifications", "microphone"],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
