@@ -595,8 +595,16 @@ DIRECTIONS:
   // --- WebSocket Server implementation ---
   const wss = new WebSocketServer({ noServer: true });
 
+  wss.on('error', (err) => {
+    console.warn('WebSocket Server event caught:', err.message);
+  });
+
   wss.on('connection', (ws: WebSocket) => {
     let clientSession: SocketClient | null = null;
+
+    ws.on('error', (err) => {
+      console.warn('WebSocket client connection error:', err.message);
+    });
 
     ws.on('message', (rawMsg: string) => {
       try {
@@ -760,16 +768,13 @@ DIRECTIONS:
   });
 
   httpServer.on('upgrade', (request, socket, head) => {
-    // Avoid hijacking Vite's HMR WebSocket
-    if (
-      request.headers['sec-websocket-protocol'] === 'vite-hmr' ||
-      (request.url && request.url.includes('vite-hmr'))
-    ) {
-      return;
+    const url = request.url || '';
+    // Only intercept upgrades specifically intended for our custom /api/ws path
+    if (url.startsWith('/api/ws')) {
+      wss.handleUpgrade(request, socket, head, (ws) => {
+        wss.emit('connection', ws, request);
+      });
     }
-    wss.handleUpgrade(request, socket, head, (ws) => {
-      wss.emit('connection', ws, request);
-    });
   });
 
   // Serve static files inside dev vs prod

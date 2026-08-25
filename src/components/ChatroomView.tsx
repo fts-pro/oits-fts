@@ -113,17 +113,30 @@ export default function ChatroomView({
 
     // Fetch message history from REST API first
     fetch(`/api/chat-history/${activeRoomId}`)
-      .then(res => res.json())
-      .then(history => {
-        setMessages(history);
+      .then(async (res) => {
+        if (!res.ok) return [];
+        const ct = res.headers.get('content-type');
+        if (ct && ct.includes('application/json')) {
+          return await res.json();
+        }
+        return [];
       })
-      .catch(err => console.error('Failed to load chat history:', err));
+      .then(history => {
+        if (Array.isArray(history)) {
+          setMessages(history);
+        }
+      })
+      .catch(err => console.warn('Chat history unavailable:', err));
 
-    // Initialize Browser WebSocket
+    // Initialize Browser WebSocket specifically on /api/ws
     const protocol = window.location.protocol === 'https:' ? 'wss' : 'ws';
-    const wsUrl = `${protocol}://${window.location.host}`;
+    const wsUrl = `${protocol}://${window.location.host}/api/ws`;
     const ws = new WebSocket(wsUrl);
     socketRef.current = ws;
+
+    ws.onerror = (e) => {
+      console.warn('Chatroom WebSocket notice:', e);
+    };
 
     ws.onopen = () => {
       // Send Join Event

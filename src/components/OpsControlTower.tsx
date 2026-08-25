@@ -63,16 +63,18 @@ export default function OpsControlTower({
     try {
       const start = performance.now();
       const res = await fetch('/api/health');
-      const data = await res.json();
-      const end = performance.now();
-      setHealth({
-        status: data.status,
-        time: data.time,
-        latency: Math.round(end - start),
-        dbSynced: true
-      });
+      if (res.ok && res.headers.get('content-type')?.includes('application/json')) {
+        const data = await res.json();
+        const end = performance.now();
+        setHealth({
+          status: data.status || 'online',
+          time: data.time || new Date().toISOString(),
+          latency: Math.round(end - start),
+          dbSynced: true
+        });
+      }
     } catch (e) {
-      console.error('Failed to read live server telemetry:', e);
+      console.warn('Telemetry check notice:', e);
     }
   };
 
@@ -81,13 +83,15 @@ export default function OpsControlTower({
     try {
       setFetchingLogs(true);
       const res = await fetch('/api/audit-logs');
-      if (res.ok) {
+      if (res.ok && res.headers.get('content-type')?.includes('application/json')) {
         const data = await res.json();
-        // Take the latest 5 records
-        setRecentLogs(data.slice(0, 5));
+        if (Array.isArray(data)) {
+          // Take the latest 5 records
+          setRecentLogs(data.slice(0, 5));
+        }
       }
     } catch (e) {
-      console.error('Failed to retrieve recent actions:', e);
+      console.warn('Recent actions notice:', e);
     } finally {
       setFetchingLogs(false);
     }

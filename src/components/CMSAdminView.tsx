@@ -86,9 +86,18 @@ export default function CMSAdminView({
 
   const fetchHealthData = () => {
     fetch('/api/system-health')
-      .then(res => res.json())
-      .then(data => setHealthData(data))
-      .catch(err => console.error('Error fetching system health metrics:', err));
+      .then(async (res) => {
+        if (!res.ok) return null;
+        const ct = res.headers.get('content-type');
+        if (ct && ct.includes('application/json')) {
+          return await res.json();
+        }
+        return null;
+      })
+      .then(data => {
+        if (data) setHealthData(data);
+      })
+      .catch(err => console.warn('System health metric sync warning:', err));
   };
 
   useEffect(() => {
@@ -145,11 +154,18 @@ export default function CMSAdminView({
   const fetchAuditLogs = () => {
     setLoadingLogs(true);
     fetch('/api/audit-logs')
-      .then(res => res.json())
-      .then(logs => {
-        setAuditLogs(logs);
+      .then(async (res) => {
+        if (!res.ok) return [];
+        const ct = res.headers.get('content-type');
+        if (ct && ct.includes('application/json')) {
+          return await res.json();
+        }
+        return [];
       })
-      .catch(err => console.error('Failed to load audits:', err))
+      .then(logs => {
+        if (Array.isArray(logs)) setAuditLogs(logs);
+      })
+      .catch(err => console.warn('Failed to load audits:', err))
       .finally(() => setLoadingLogs(false));
   };
 

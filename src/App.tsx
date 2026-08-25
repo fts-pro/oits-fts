@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Routes, Route, useLocation, useNavigate, Navigate, Link } from 'react-router-dom';
 import { Product, CaseStudy, CMSBlock, Channel, User } from './types';
+import { INITIAL_PRODUCTS, INITIAL_CASE_STUDIES, INITIAL_CMS_BLOCKS, INITIAL_CHANNELS } from './constants';
 import ShowcaseView from './components/ShowcaseView';
 import ChatroomView from './components/ChatroomView';
 import UserDashboardView from './components/UserDashboardView';
@@ -70,38 +71,43 @@ export default function App() {
   const [timeLeft, setTimeLeft] = useState(30);
 
   // Server memory database mirrors
-  const [products, setProducts] = useState<Product[]>([]);
-  const [caseStudies, setCaseStudies] = useState<CaseStudy[]>([]);
-  const [cmsBlocks, setCmsBlocks] = useState<CMSBlock[]>([]);
-  const [channels, setChannels] = useState<Channel[]>([]);
+  const [products, setProducts] = useState<Product[]>(INITIAL_PRODUCTS);
+  const [caseStudies, setCaseStudies] = useState<CaseStudy[]>(INITIAL_CASE_STUDIES);
+  const [cmsBlocks, setCmsBlocks] = useState<CMSBlock[]>(INITIAL_CMS_BLOCKS);
+  const [channels, setChannels] = useState<Channel[]>(INITIAL_CHANNELS);
   const [activeRoomId, setActiveRoomId] = useState<string>('chan-general');
 
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
 
   // Fetch initial corporate datasets on load
   const fetchData = async () => {
+    const parseJsonSafe = async <T,>(res: Response, fallback: T): Promise<T> => {
+      if (!res.ok) return fallback;
+      const contentType = res.headers.get('content-type');
+      if (contentType && contentType.includes('application/json')) {
+        try {
+          return await res.json();
+        } catch {
+          return fallback;
+        }
+      }
+      return fallback;
+    };
+
     try {
-      setLoading(true);
-      const [resProd, resCs, resCms, resChans] = await Promise.all([
-        fetch('/api/products'),
-        fetch('/api/case-studies'),
-        fetch('/api/cms-blocks'),
-        fetch('/api/channels'),
+      const [prodData, csData, cmsData, chansData] = await Promise.all([
+        fetch('/api/products').then(res => parseJsonSafe(res, INITIAL_PRODUCTS)).catch(() => INITIAL_PRODUCTS),
+        fetch('/api/case-studies').then(res => parseJsonSafe(res, INITIAL_CASE_STUDIES)).catch(() => INITIAL_CASE_STUDIES),
+        fetch('/api/cms-blocks').then(res => parseJsonSafe(res, INITIAL_CMS_BLOCKS)).catch(() => INITIAL_CMS_BLOCKS),
+        fetch('/api/channels').then(res => parseJsonSafe(res, INITIAL_CHANNELS)).catch(() => INITIAL_CHANNELS),
       ]);
 
-      const prodData = await resProd.json();
-      const csData = await resCs.json();
-      const cmsData = await resCms.json();
-      const chansData = await resChans.json();
-
-      setProducts(prodData);
-      setCaseStudies(csData);
-      setCmsBlocks(cmsData);
-      setChannels(chansData);
+      if (Array.isArray(prodData) && prodData.length > 0) setProducts(prodData);
+      if (Array.isArray(csData) && csData.length > 0) setCaseStudies(csData);
+      if (Array.isArray(cmsData) && cmsData.length > 0) setCmsBlocks(cmsData);
+      if (Array.isArray(chansData) && chansData.length > 0) setChannels(chansData);
     } catch (err) {
-      console.error('Failed to parse database records from Express endpoints:', err);
-    } finally {
-      setLoading(false);
+      console.warn('Syncing with local dataset mirror:', err);
     }
   };
 
@@ -498,9 +504,9 @@ export default function App() {
             to="/"
             className="flex items-center gap-3 active:scale-98 transition-transform group text-left"
           >
-            <div className="w-8 h-8 flex items-center justify-center shrink-0">
-              <img src="/oits_logo.png" alt="" className="w-full h-full object-contain" onError={(e) => (e.target as any).style.display = 'none'} />
-              <Cpu className="w-4 h-4 text-blue-600 group-hover:rotate-12 transition-transform" />
+            <div className="h-8 w-auto flex items-center justify-center shrink-0">
+              <img src="/Logo.png" alt="OITS Dhaka" className="h-8 w-auto object-contain dark:hidden" referrerPolicy="no-referrer" onError={(e) => { (e.target as any).src = '/Logo.svg'; }} />
+              <img src="/Logo-White.png" alt="OITS Dhaka" className="h-8 w-auto object-contain hidden dark:block" referrerPolicy="no-referrer" onError={(e) => { (e.target as any).src = '/Logo-White.svg'; }} />
             </div>
             <div className="hidden sm:block">
               <span className="text-sm font-black tracking-tight text-slate-850 dark:text-slate-100 block leading-none font-sans uppercase bg-clip-text text-transparent bg-gradient-to-r from-blue-700 to-blue-500 dark:from-white dark:to-slate-400">OITS Dhaka</span>

@@ -200,57 +200,23 @@ export const Footer: React.FC<FooterProps> = ({ theme = "dark", toggleTheme = ()
                 aria-label={`${COMPANY_NAME} homepage - Return to Landing Page`}
               >
                 <div
-                  className="w-16 h-8 sm:w-24 sm:h-12 md:w-28 md:h-14 flex items-center justify-center shrink-0 overflow-hidden"
+                  className="h-9 sm:h-10 md:h-12 w-auto flex items-center justify-start shrink-0"
                   aria-hidden="true"
                 >
+                  {/* Light Mode Logo */}
                   <img 
-                    src="/oits_logo_hq.png" 
-                    alt="" 
-                    className="w-full h-full object-contain" 
-                    onError={(e) => {
-                      const target = e.target as any;
-                      if (target.src.includes('oits_logo_hq')) {
-                        target.src = '/oits_logo.png';
-                      } else {
-                        target.style.display = 'none';
-                        target.nextSibling.style.display = 'block';
-                      }
-                    }}
+                    src="/Logo.png" 
+                    alt={COMPANY_NAME} 
+                    className="h-full w-auto object-contain dark:hidden" 
+                    referrerPolicy="no-referrer"
                   />
-                  <svg
-                    viewBox="0 0 100 100"
-                    className="w-full h-full drop-shadow-sm hidden"
-                  >
-                    <defs>
-                      <linearGradient
-                        id="footer-logo-gradient-new"
-                        x1="0%"
-                        y1="0%"
-                        x2="100%"
-                        y2="100%"
-                      >
-                        <stop offset="0%" stopColor="#1e3a8a" />
-                        <stop offset="50%" stopColor="#2563eb" />
-                        <stop offset="100%" stopColor="#3b82f6" />
-                      </linearGradient>
-                    </defs>
-                    <circle
-                      cx="50"
-                      cy="50"
-                      r="42"
-                      fill="none"
-                      stroke="url(#footer-logo-gradient-new)"
-                      strokeWidth="7"
-                    />
-                    <path
-                      d="M38 32 H48 V68 H38 Z"
-                      fill="url(#footer-logo-gradient-new)"
-                    />
-                    <path
-                      d="M54 32 H84 V41 H74 V68 H64 V41 H54 Z"
-                      fill="url(#footer-logo-gradient-new)"
-                    />
-                  </svg>
+                  {/* Dark Mode Logo */}
+                  <img 
+                    src="/Logo-White.png" 
+                    alt={COMPANY_NAME} 
+                    className="h-full w-auto object-contain hidden dark:block" 
+                    referrerPolicy="no-referrer"
+                  />
                 </div>
               </Link>
 

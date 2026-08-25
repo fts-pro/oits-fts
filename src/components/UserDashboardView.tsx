@@ -93,22 +93,32 @@ export default function UserDashboardView({ currentUser, onUpdateUser, theme = '
     if (activeMainTab === 'activity' && currentUser) {
       setLoadingLogs(true);
       fetch('/api/audit-logs')
-        .then(res => res.json())
-        .then(logs => {
-          // Filter logs for current user or system logs relevant to user
-          const filtered = logs.filter((l: any) => l.username === currentUser.username || l.username === 'system');
-          // Map to SecurityLog type
-          const mapped = filtered.map((l: any) => ({
-            id: l.id,
-            timestamp: l.timestamp,
-            ip: l.ip || '127.0.0.1', // Fallback for simulated logs
-            action: l.action,
-            status: 'success' as const,
-            type: l.action.toLowerCase().includes('login') ? 'LOGIN' as const : 
-                  l.action.toLowerCase().includes('mfa') ? 'MFA' as const : 'SIGN' as const
-          }));
-          setSecurityLogs(mapped);
+        .then(async (res) => {
+          if (!res.ok) return [];
+          const ct = res.headers.get('content-type');
+          if (ct && ct.includes('application/json')) {
+            return await res.json();
+          }
+          return [];
         })
+        .then(logs => {
+          if (Array.isArray(logs)) {
+            // Filter logs for current user or system logs relevant to user
+            const filtered = logs.filter((l: any) => l.username === currentUser.username || l.username === 'system');
+            // Map to SecurityLog type
+            const mapped = filtered.map((l: any) => ({
+              id: l.id,
+              timestamp: l.timestamp,
+              ip: l.ip || '127.0.0.1', // Fallback for simulated logs
+              action: l.action,
+              status: 'success' as const,
+              type: l.action.toLowerCase().includes('login') ? 'LOGIN' as const : 
+                    l.action.toLowerCase().includes('mfa') ? 'MFA' as const : 'SIGN' as const
+            }));
+            setSecurityLogs(mapped);
+          }
+        })
+        .catch(err => console.warn('Security logs sync warning:', err))
         .finally(() => setLoadingLogs(false));
     }
   }, [activeMainTab, currentUser]);

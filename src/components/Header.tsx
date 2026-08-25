@@ -1,4 +1,6 @@
 import React, { useState, useEffect } from 'react';
+import logoImg from '../assets/Logo.png';
+import logoWhiteImg from '../assets/Logo-White.png';
 import { Menu, X, Sun, Moon, Home, ChevronDown, Mail, Briefcase, Zap, UserCircle, GalleryHorizontalEnd, Users } from 'lucide-react';
 import { Link, useLocation } from 'react-router-dom';
 import { COMPANY_NAME, NAV_ITEMS } from '../constants';
@@ -36,32 +38,21 @@ export const Header: React.FC<HeaderProps> = ({ theme, toggleTheme }) => {
 
   const BrandLogo = () => (
     <div className="h-full flex items-center gap-2">
-      <div className="h-full flex items-center justify-center shrink-0 overflow-hidden" aria-hidden="true">
-        {/* We use an image if available, fallback to refined SVG logo matching OITS identity */}
+      <div className="h-full flex items-center justify-center shrink-0" aria-hidden="true">
+        {/* Light Mode Logo: exact direct reference to Logo.png */}
         <img 
-          src="/oits_logo_hq.png" 
+          src={logoImg} 
           alt={COMPANY_NAME} 
-          className="h-full w-auto max-h-full object-contain" 
-          onError={(e) => {
-            const target = e.target as any;
-            if (target.src.includes('oits_logo_hq')) {
-              target.src = '/oits_logo.png';
-            } else {
-              target.style.display = 'none';
-              target.nextSibling.style.display = 'block';
-            }
-          }}
+          className="h-8 sm:h-10 md:h-11 w-auto max-h-full object-contain dark:hidden" 
+          referrerPolicy="no-referrer"
         />
-        <svg viewBox="0 0 100 100" className="h-full w-auto drop-shadow-sm hidden">
-          <defs>
-            <linearGradient id="header-logo-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
-              <stop offset="0%" stopColor="#1e3a8a" />
-              <stop offset="100%" stopColor="#2563eb" />
-            </linearGradient>
-          </defs>
-          <circle cx="50" cy="50" r="45" fill="url(#header-logo-gradient)" />
-          <text x="50" y="65" textAnchor="middle" fill="white" fontSize="40" fontWeight="900" fontFamily="sans-serif">IT</text>
-        </svg>
+        {/* Dark Mode Logo: exact direct reference to Logo-White.png */}
+        <img 
+          src={logoWhiteImg} 
+          alt={COMPANY_NAME} 
+          className="h-8 sm:h-10 md:h-11 w-auto max-h-full object-contain hidden dark:block" 
+          referrerPolicy="no-referrer"
+        />
       </div>
     </div>
   );
